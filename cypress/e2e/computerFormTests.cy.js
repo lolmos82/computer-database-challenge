@@ -33,4 +33,24 @@ describe('computer form tests', () => {
       .should('eq', 303)
     cy.get('.alert-message.warning').should('have.text','Done !  Computer New Computer has been created')
   })
+  
+  it('cant create without mandatory fields', () => {
+    cy.get('#add').click()
+    cy.intercept('POST', '/computers')
+      .as('cancelAdd')
+    cy.url().should('include','/new')
+    cy.get('.btn.primary').click()
+    cy.wait('@cancelAdd')
+      .its('response.statusCode')
+      .should('eq', 400)
+    cy.get('.error > .input > .help-inline').should('have.text','Failed to refine type : Predicate isEmpty() did not fail.')
+  })
+
+  it('can cancel adding a new computer', () => {
+    cy.get('#add').click()
+    cy.url().should('include','/new')
+    cy.get('#name').type('New Computer')
+    cy.get('a.btn').click()
+    cy.url().should('not.include', '/new')
+  })
 })
