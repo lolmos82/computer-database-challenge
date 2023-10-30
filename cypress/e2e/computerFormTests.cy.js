@@ -78,45 +78,23 @@ describe('computer form tests', () => {
             .contains('has been updated')
     cy.url().should('not.include', '/381')
   })
+})
 
-  //Tests to validation data entered on the Introduced field
-  it('validates Introduced field with format #MM/DD/YYYY', () => {
-    cy.get('#add').click()
-    cy.get('#name').type('New Computer')
-    cy.get('#introduced').type("01-25-2023")
-    cy.get('.btn.primary').click()
-    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+//Tests to validation data entered on the Introduced field
+describe('Validate date inputs', () => {
+  beforeEach(() => {
+      cy.visit('https://computer-database.gatling.io/computers')
   })
 
-  it('validates Introduced field with format #DD/MM/YYYY', () => {
-    cy.get('#add').click()
-    cy.get('#name').type('New Computer')
-    cy.get('#introduced').type("25-01-2023")
-    cy.get('.btn.primary').click()
-    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
-  })
+  const datesInvalidFormat = ["01-25-2023","25-01-2023","2023-25-01","23-01-25","abc123"]
 
-  it('validates Introduced field with format #YYYY/DD/MM', () => {
-    cy.get('#add').click()
-    cy.get('#name').type('New Computer')
-    cy.get('#introduced').type("2023-25-01")
-    cy.get('.btn.primary').click()
-    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
-  })
-  
-  it('validates Introduced field with format #YY/MM/DD', () => {
-    cy.get('#add').click()
-    cy.get('#name').type('New Computer')
-    cy.get('#introduced').type("23-01-25")
-    cy.get('.btn.primary').click()
-    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
-  })
-
-  it('validates Introduced field does not accept strings', () => {
-    cy.get('#add').click()
-    cy.get('#name').type('New Computer')
-    cy.get('#introduced').type("abc123")
-    cy.get('.btn.primary').click()
-    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+  datesInvalidFormat.forEach((datesInvalidFormat) => {
+    it(`validates Introduced field date is valid: ${datesInvalidFormat}`, () => {
+      cy.get('#add').click()
+      cy.get('#name').type('New Computer')
+      cy.get('#introduced').type(datesInvalidFormat)
+      cy.get('.btn.primary').click()
+      cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+      })
   })
 })
