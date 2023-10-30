@@ -96,5 +96,13 @@ describe('Validate date inputs', () => {
       cy.get('.btn.primary').click()
       cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
       })
+
+    it(`validates Discontinued field date is valid: ${datesInvalidFormat}`, () => {
+      cy.get('#add').click()
+      cy.get('#name').type('New Computer')
+      cy.get('#discontinued').type(datesInvalidFormat)
+      cy.get('.btn.primary').click()
+      cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+      })
   })
 })
