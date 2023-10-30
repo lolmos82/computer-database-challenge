@@ -54,7 +54,7 @@ describe('computer form tests', () => {
     cy.url().should('not.include', '/new')
   })
 
-  it.only('can delete a computer', () => {
+  it('can delete a computer', () => {
     cy.intercept('POST', '/computers/381/delete')
       .as('deleteComputer')
     cy.get('tbody > :nth-child(1) > :nth-child(1) > a').click()
@@ -65,7 +65,7 @@ describe('computer form tests', () => {
     cy.get('.alert-message').should('be.visible').should('have.text','Done !  Computer ACE has been deleted')
   })
 
-  it.only('can edit a computer', () => {
+  it('can edit a computer', () => {
     cy.intercept('POST', '/computers/381')
       .as('editComputer')
     cy.get('tbody > :nth-child(1) > :nth-child(1) > a').click()
@@ -77,5 +77,46 @@ describe('computer form tests', () => {
     cy.get('.alert-message.warning').should('be.visible')
             .contains('has been updated')
     cy.url().should('not.include', '/381')
+  })
+
+  //Tests to validation data entered on the Introduced field
+  it('validates Introduced field with format #MM/DD/YYYY', () => {
+    cy.get('#add').click()
+    cy.get('#name').type('New Computer')
+    cy.get('#introduced').type("01-25-2023")
+    cy.get('.btn.primary').click()
+    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+  })
+
+  it('validates Introduced field with format #DD/MM/YYYY', () => {
+    cy.get('#add').click()
+    cy.get('#name').type('New Computer')
+    cy.get('#introduced').type("25-01-2023")
+    cy.get('.btn.primary').click()
+    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+  })
+
+  it('validates Introduced field with format #YYYY/DD/MM', () => {
+    cy.get('#add').click()
+    cy.get('#name').type('New Computer')
+    cy.get('#introduced').type("2023-25-01")
+    cy.get('.btn.primary').click()
+    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+  })
+  
+  it('validates Introduced field with format #YY/MM/DD', () => {
+    cy.get('#add').click()
+    cy.get('#name').type('New Computer')
+    cy.get('#introduced').type("23-01-25")
+    cy.get('.btn.primary').click()
+    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+  })
+
+  it('validates Introduced field does not accept strings', () => {
+    cy.get('#add').click()
+    cy.get('#name').type('New Computer')
+    cy.get('#introduced').type("abc123")
+    cy.get('.btn.primary').click()
+    cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
   })
 })
