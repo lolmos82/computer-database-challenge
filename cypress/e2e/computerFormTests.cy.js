@@ -3,7 +3,6 @@
 const dateFormatErrorText = "Failed to decode date : java.time.format.DateTimeParseException:"
 const newComputerName = "Test Computer"
 
-
 describe('computer form tests', () => {
   beforeEach(() => {
     cy.visit('https://computer-database.gatling.io/computers')
