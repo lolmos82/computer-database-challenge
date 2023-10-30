@@ -22,3 +22,10 @@ If you want to open Cypress UI
 ```
 npx cypress open
 ```
+
+If you want to run a particular spec.
+```
+npx cypress run --spec <spec-name-with-specific-path>
+```
+Example:
+```npx cypress -run --spec .\e2e\computerFormTests.cy.js```
