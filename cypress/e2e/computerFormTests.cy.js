@@ -1,5 +1,9 @@
 /// <reference types="cypress" />
 
+const dateFormatErrorText = "Failed to decode date : java.time.format.DateTimeParseException:"
+const newComputerName = "Test Computer"
+
+
 describe('computer form tests', () => {
   beforeEach(() => {
     cy.visit('https://computer-database.gatling.io/computers')
@@ -10,12 +14,12 @@ describe('computer form tests', () => {
       .as('addComputer')
     cy.get('#add').click()
     cy.url().should('include','/new')
-    cy.get('#name').type("New Computer")
+    cy.get('#name').type(newComputerName)
     cy.get('.btn.primary').click()
     cy.wait('@addComputer')
       .its('response.statusCode')
       .should('eq', 303)
-    cy.get('.alert-message.warning').should('have.text','Done !  Computer New Computer has been created')
+    cy.get('.alert-message.warning').should('have.text',`Done !  Computer ${newComputerName} has been created`)
   })
 
   it('creates a new computer by completing all fields', () => {
@@ -23,7 +27,7 @@ describe('computer form tests', () => {
       .as('addComputer')
     cy.get('#add').click()
     cy.url().should('include','/new')
-    cy.get('#name').type("New Computer")
+    cy.get('#name').type(newComputerName)
     cy.get('#introduced').type("2022-01-25")
     cy.get('#discontinued').type("2023-01-25")
     cy.get('#company').select('Sony')
@@ -31,7 +35,7 @@ describe('computer form tests', () => {
     cy.wait('@addComputer')
       .its('response.statusCode')
       .should('eq', 303)
-    cy.get('.alert-message.warning').should('have.text','Done !  Computer New Computer has been created')
+    cy.get('.alert-message.warning').should('have.text',`Done !  Computer ${newComputerName} has been created`)
   })
   
   it('cant create without mandatory fields', () => {
@@ -49,7 +53,7 @@ describe('computer form tests', () => {
   it('can cancel adding a new computer', () => {
     cy.get('#add').click()
     cy.url().should('include','/new')
-    cy.get('#name').type('New Computer')
+    cy.get('#name').type(newComputerName)
     cy.get('a.btn').click()
     cy.url().should('not.include', '/new')
   })
@@ -80,7 +84,7 @@ describe('computer form tests', () => {
   })
 })
 
-//Tests to validation data entered on the Introduced field
+//Tests to validate data entered on the date fields
 describe('Validate date inputs', () => {
   beforeEach(() => {
       cy.visit('https://computer-database.gatling.io/computers')
@@ -91,18 +95,18 @@ describe('Validate date inputs', () => {
   datesInvalidFormat.forEach((datesInvalidFormat) => {
     it(`validates Introduced field date is valid: ${datesInvalidFormat}`, () => {
       cy.get('#add').click()
-      cy.get('#name').type('New Computer')
+      cy.get('#name').type(newComputerName)
       cy.get('#introduced').type(datesInvalidFormat)
       cy.get('.btn.primary').click()
-      cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+      cy.get('.error > .input > .help-inline').should('contain', dateFormatErrorText)
       })
 
     it(`validates Discontinued field date is valid: ${datesInvalidFormat}`, () => {
       cy.get('#add').click()
-      cy.get('#name').type('New Computer')
+      cy.get('#name').type(newComputerName)
       cy.get('#discontinued').type(datesInvalidFormat)
       cy.get('.btn.primary').click()
-      cy.get('.error > .input > .help-inline').should('contain','Failed to decode date : java.time.format.DateTimeParseException:')
+      cy.get('.error > .input > .help-inline').should('contain', dateFormatErrorText)
       })
   })
 })
